@@ -207,7 +207,7 @@ export default class RegExr extends EventDispatcher {
 	_change() {
 		this.dispatchEvent("change");
 		let solver = this.flavor.solver, exp = this.expression;
-		let o = {pattern:exp.pattern, flags:exp.flags, mode:this.text.mode};
+		let o = {pattern:exp.pattern, delimiter:exp.delimiter, flags:exp.flags, mode:this.text.mode};
 		if (o.mode === "tests") {
 			o.tests = this.text.tests;
 		} else {
@@ -221,7 +221,7 @@ export default class RegExr extends EventDispatcher {
 		$.toggleClass(this.docEl, "tests-mode", this.text.mode === "tests");
 		this._change();
 	}
-	
+
 	_handleResult(result) {
 		this.result = this._processResult(result);
 		this.dispatchEvent("result");

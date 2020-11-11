@@ -28,7 +28,7 @@ export default class ExpressionHighlighter extends EventDispatcher {
 		this._hoverMarks = [];
 		this._hoverToken = null;
 	}
-	
+
 	clear() {
 		this.cm.operation(() => {
 			let marks = this._activeMarks;
@@ -38,32 +38,32 @@ export default class ExpressionHighlighter extends EventDispatcher {
 			marks.length = 0;
 		});
 	}
-	
-	draw(token) {
+
+	draw(token, delimiter) {
 		let cm = this.cm, pre = ExpressionHighlighter.CSS_PREFIX;
-	
+
 		this.clear();
 		cm.operation(() => {
-			
+
 			let groupClasses = ExpressionHighlighter.GROUP_CLASS_BY_TYPE;
 			let doc = cm.getDoc(), endToken, marks = this._activeMarks;
-	
+
 			while (token) {
 				if (token.clear) {
 					token = token.next;
 					continue;
 				}
 				token = this._calcTokenPos(token);
-	
+
 				var className = pre + (token.clss || token.type);
 				if (token.error) {
 					className += " " + pre + (token.error.warning ? "warning" : "error");
 				}
-	
+
 				if (className) {
 					marks.push(doc.markText(token.startPos, token.endPos, {className: className}));
 				}
-	
+
 				if (token.close) {
 					endToken = this._calcTokenPos(token.close);
 					className = groupClasses[token.clss || token.type];
@@ -76,12 +76,12 @@ export default class ExpressionHighlighter extends EventDispatcher {
 			}
 		});
 	}
-	
+
 	set hoverToken(token) {
 		if (token === this._hoverToken) { return; }
 		if (token && token.set && token.set.indexOf(this._hoverToken) !== -1) { return; }
 		while (this._hoverMarks.length) { this._hoverMarks.pop().clear(); }
-		
+
 		this._hoverToken = token;
 		if (token) {
 			if (token.open) {
@@ -95,15 +95,15 @@ export default class ExpressionHighlighter extends EventDispatcher {
 				}
 			}
 		}
-		
+
 		this.dispatchEvent("hover");
 	};
-	
+
 	get hoverToken() {
 		return this._hoverToken;
 	}
-	
-	
+
+
 // private methods:
 	_drawSelect(token, style = ExpressionHighlighter.CSS_PREFIX+"selected") {
 		let doc = this.cm.getDoc(), endToken = token.close || token;
@@ -111,7 +111,7 @@ export default class ExpressionHighlighter extends EventDispatcher {
 			endToken = token.set[token.set.length - 1];
 			token = token.set[0];
 		}
-		
+
 		this._calcTokenPos(endToken);
 		this._calcTokenPos(token);
 		this._hoverMarks.push(doc.markText(token.startPos, endToken.endPos, {
@@ -128,7 +128,7 @@ export default class ExpressionHighlighter extends EventDispatcher {
 		CMUtils.calcRangePos(this.cm, token.i, token.l, token);
 		return token;
 	};
-	
+
 };
 
 ExpressionHighlighter.CSS_PREFIX = "exp-";

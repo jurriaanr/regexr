@@ -21,7 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // TODO: rewrite to use multiline template literals?
 
 let reference_content = {}, o = reference_content;
-export default reference_content; 
+export default reference_content;
 
 o.label = "RegEx Reference";
 o.id = "reference";
@@ -36,7 +36,7 @@ o.kids = [
 	id: "charclasses",
 	desc: "Character classes match a character from a specific set. There are a number of predefined character classes and you can also define your own sets.",
 	kids: [
-		
+
 		{
 		id:"set",
 		label: "character set",
@@ -274,7 +274,7 @@ o.kids = [
 		}
 	]
 	},
-	
+
 	{
 	label: "Escaped characters",
 	id:"escchars",
@@ -342,7 +342,7 @@ o.kids = [
 		}
 	]
 	},
-	
+
 	{
 	label: "Groups & References",
 	id:"groups",
@@ -427,7 +427,7 @@ o.kids = [
 		}
 	]
 	},
-	
+
 	{
 	label: "Lookaround",
 	id:"lookaround",
@@ -469,7 +469,7 @@ o.kids = [
 		}
 	]
 	},
-	
+
 	{
 	label: "Quantifiers & Alternation",
 	id:"quants",
@@ -530,7 +530,7 @@ o.kids = [
 		}
 	]
 	},
-	
+
 	{
 	label: "Special",
 	id:"other",
@@ -631,12 +631,12 @@ o.kids = [
 		}
 	]
 	},
-	
+
 	{
 	id:"flags",
 	label:"Flags",
 	tooltip:"Expression flags change how the expression is interpreted. Click to edit.",
-	desc:"Expression flags change how the expression is interpreted. Flags follow the closing forward slash of the expression (ex. <code>/.+/igm</code> ).",
+	desc:"Expression flags change how the expression is interpreted. Flags follow the closing delimiter of the expression (ex. <code>/.+/igm</code> ).",
 	target:"flags",
 	kids: [
 		{
@@ -774,8 +774,8 @@ o.errors = {
 	posixcharclassbad:"Unrecognized POSIX character class.",
 	posixcharclassnoset:"POSIX character class must be in a character set.",
 	notsupported:"The \"{{~getLabel()}}\" feature is not supported in this flavor of RegEx.",
-	fwdslash:"Unescaped forward slash. This may cause issues if copying/pasting this expression into code.",
-	esccharbad:"Invalid escape sequence.",
+	delimiter:"Unescaped delimiter. This may cause issues if copying/pasting this expression into code.",
+	//esccharbad:"Invalid escape sequence.", // double?
 	servercomm:"An error occurred while communicating with the server.",
 	extraelse:"Extra else in conditional group.",
 	unmatchedref:"Reference to non-existent group \"{{name}}\".",

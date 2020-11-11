@@ -15,8 +15,8 @@ RewriteRule (.+)\.md /
 AddType 'application/x-font-woff' .woff
 
 # HTTPS to HTTP
-RewriteCond %{HTTPS} on
-RewriteRule (.*) http://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+#RewriteCond %{HTTPS} on
+#RewriteRule (.*) http://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 
 # BEGIN GZIP
 <ifmodule mod_deflate.c>

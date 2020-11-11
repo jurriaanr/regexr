@@ -27,11 +27,11 @@ export default class Example {
 		this.title = title;
 		this.example = ex;
 	}
-	
+
 	set example(ex) {
 		if (ex === this._example) { return; }
 		this._example = ex;
-		
+
 		let str = "", txt, exp, regex;
 		if (ex) {
 			exp = ex[0];
@@ -53,10 +53,10 @@ export default class Example {
 				// TODO: this will need to be updated when we support other delimiters:
 				app.expression.value = exp[0] === "/" ? exp : "/"+exp+"/g";
 			});
-			
+
 		}
 		if (txt) { $.query("code.text > .load", this.el).addEventListener("click", ()=> app.text.value = txt); }
 	}
-	
+
 
 }

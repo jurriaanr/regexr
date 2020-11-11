@@ -26,14 +26,18 @@ import profiles from "./profiles/profiles.js";
 import app from "./app";
 
 export default class Flavor extends EventDispatcher {
-	
+
 	constructor(flavor) {
 		super();
 		this.value = app.prefs.read("flavor");
 		this._browserSolver = new BrowserSolver();
 		this._serverSolver = new ServerSolver();
 	}
-	
+
+	get supportedDelimiters() {
+		return ['/', '%', '@', '~'];
+	}
+
 	set value(id) {
 		let profile = profiles[(id && id.toLowerCase()) || "js"];
 		if (!profile || profile === this._profile) { return; }
@@ -43,44 +47,48 @@ export default class Flavor extends EventDispatcher {
 		app.prefs.write("flavor", id);
 		this.dispatchEvent("change");
 	}
-	
+
 	get value() {
 		return this._profile.id;
 	}
-	
+
 	get profile() {
 		return this._profile;
 	}
-	
+
 	get profiles() {
 		return [profiles.js, profiles.pcre];
 	}
-	
+
 	get solver() {
 		return this._profile.browser ? this._browserSolver : this._serverSolver;
 	}
-	
+
 	isTokenSupported(id) {
 		return !!this._profile._supportMap[id];
 	}
-	
+
 	getDocs(id) {
 		return this._profile.docs[id];
 	}
-	
+
 	validateFlags(list) {
 		let flags = this._profile.flags, dupes = {};
 		return list.filter((id)=>(!!flags[id] && !dupes[id] && (dupes[id] = true)));
 	}
-	
+
+	validateDelimiterStr(str) {
+		return this.supportedDelimiters.includes(str) ? str : '/';
+	}
+
 	validateFlagsStr(str) {
 		return this.validateFlags(str.split("")).join("");
 	}
-	
+
 	isFlagSupported(id) {
 		return !!this._profile.flags[id];
 	}
-	
+
 	_buildSupportMap(profile) {
 		if (profile._supportMap) { return; }
 		let map = profile._supportMap = {}, props = Flavor.SUPPORT_MAP_PROPS, n;
@@ -89,7 +97,7 @@ export default class Flavor extends EventDispatcher {
 		for (n in o) { map["esc_"+o[n]] = true; }
 		for (n in esc) { map["esc_"+esc[n]] = true; }
 	}
-	
+
 	_addToSupportMap(map, o, rev) {
 		if (rev) { for (let n in o) { map[o[n]] = true; } }
 		else { for (let n in o) { map[n] = o[n]; } }
