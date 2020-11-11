@@ -22,16 +22,16 @@ export default class ExpressionLexer {
 	constructor() {
 		this.profile = null;
 	}
-
+	
 	set profile(profile) {
 		this._profile = profile;
 		this.string = this.token = this.errors = this.captureGroups = this.namedGroups = null;
 	}
-
+	
 	parse(str, delimiter) {
 		if (!this._profile) { return null; }
 		if (str === this.string) { return this.token; }
-
+		
 		this.token = null;
 		this._modes = {};
 		this.string = str;
@@ -46,12 +46,12 @@ export default class ExpressionLexer {
 		let profile = this._profile, unquantifiable = profile.unquantifiable;
 		let charTypes = profile.charTypes;
 		let closeIndex = str.lastIndexOf(delimiter);
-
+		
 		for (let i=closeIndex+1; i<l; i++) { this._modes[str[i]] = true; }
-
+		
 		while (i < l) {
 			c = str[i];
-
+			
 			token = {i: i, l: 1, prev: prev, prv: prv, modes:this._modes};
 			if (prev) { prev.next = token; }
 			else { this.token = token; }
@@ -148,7 +148,7 @@ export default class ExpressionLexer {
 			if (prv && prv.type === "range" && prv.l === 1) {
 				this.validateRange(str, token, delimiter);
 			}
-
+			
 			// js warnings:
 			// TODO: this isn't ideal, but I'm hesitant to write a more robust solution for a couple of edge cases.
 			if (profile.id === "js") { this.addJSWarnings(token); }
