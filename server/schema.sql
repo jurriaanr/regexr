@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS `patterns` (
   `keywords` text CHARACTER SET utf8 COLLATE utf8_unicode_ci,
   `pattern` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `replace` text CHARACTER SET utf8 COLLATE utf8_unicode_ci,
-  `dateAdded` date NOT NULL DEFAULT '0000-00-00',
+  `dateAdded` date NOT NULL,
   `author` varchar(32) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `lastAccessed` date DEFAULT NULL,
   `content` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,

@@ -34,6 +34,7 @@ class solve extends \core\AbstractAction {
 
         $id = property_exists($data, "id")?$data->id:null;
         $pattern = $data->pattern;
+        $delimiter = $data->delimiter;
         $modifiers = idx($data, "flags");
         $text = idx($data, "text");
         $tool = idx($data, "tool");
@@ -51,17 +52,17 @@ class solve extends \core\AbstractAction {
 
         switch ($mode) {
             case 'tests':
-                $result = $this->runTests($tests, $pattern, $modifiers, $global, $id);
+                $result = $this->runTests($tests, $pattern, $delimiter, $modifiers, $global, $id);
                 break;
             case 'text':
             default:
-                $result = $this->parseText($pattern, $modifiers, $text, $tool, $global, $id);
+                $result = $this->parseText($pattern, $delimiter, $modifiers, $text, $tool, $global, $id);
         }
 
         return new \core\Result($result);
     }
 
-    function runTests($tests, $pattern, $modifiers, $global, $requestId) {
+    function runTests($tests, $pattern, $delimiter, $modifiers, $global, $requestId) {
         $testResults = [];
         $startTime = now();
         for ($i=0; $i < count($tests); $i++) {
@@ -72,9 +73,9 @@ class solve extends \core\AbstractAction {
             // PCRE functions throw warnings if something is malformed or errors out.
             set_error_handler(array($this, 'pcreWarningHandler'), E_WARNING);
             if ($global === true) {
-                $match = preg_match_all("/{$pattern}/{$modifiers}", $text, $matches, PREG_OFFSET_CAPTURE|PREG_SET_ORDER);
+                $match = preg_match_all("{$delimiter}{$pattern}{$delimiter}{$modifiers}", $text, $matches, PREG_OFFSET_CAPTURE|PREG_SET_ORDER);
             } else {
-                $match = preg_match("/{$pattern}/{$modifiers}", $text, $matches, PREG_OFFSET_CAPTURE);
+                $match = preg_match("{$delimiter}{$pattern}{$delimiter}{$modifiers}", $text, $matches, PREG_OFFSET_CAPTURE);
             }
             // Stop capturing warnings.
             restore_error_handler();
@@ -107,7 +108,7 @@ class solve extends \core\AbstractAction {
         ];
     }
 
-    function parseText($pattern, $modifiers, $text, $tool, $global, $requestId) {
+    function parseText($pattern, $delimiter, $modifiers, $text, $tool, $global, $requestId) {
         // PCRE functions throw warnings if something is malformed or errors out.
         set_error_handler(array($this, 'pcreWarningHandler'), E_WARNING);
 
@@ -115,15 +116,15 @@ class solve extends \core\AbstractAction {
 
         switch (strtolower($tool->id)) {
             case 'replace':
-                $toolResult = $this->pcreReplace($pattern, $modifiers, $text, $tool->input);
+                $toolResult = $this->pcreReplace($pattern, $delimiter, $modifiers, $text, $tool->input);
                 break;
             case 'list':
-                $toolResult = $this->pcreList($pattern, $modifiers,  $text, $tool->input);
+                $toolResult = $this->pcreList($pattern, $delimiter, $modifiers,  $text, $tool->input);
                 break;
         }
 
         $startTime = now();
-        $matches = $this->pcreMatch($pattern, $modifiers, $global, $text);
+        $matches = $this->pcreMatch($pattern, $delimiter, $modifiers, $global, $text);
         $endTime = now();
 
         // Stop capturing warnings.
@@ -164,28 +165,28 @@ class solve extends \core\AbstractAction {
         return null;
     }
 
-    function pcreList($pattern, $modifiers, $source, $str) {
+    function pcreList($pattern, $delimiter, $modifiers, $source, $str) {
         $results = [];
-        preg_replace_callback("/{$pattern}/{$modifiers}", function($matches) use ($pattern, $modifiers, $str, &$results) {
-            $results[] = preg_replace("/{$pattern}/{$modifiers}", $str, $matches[0]);
+        preg_replace_callback("{$delimiter}{$pattern}{$delimiter}{$modifiers}", function($matches) use ($pattern, $delimiter, $modifiers, $str, &$results) {
+            $results[] = preg_replace("{$delimiter}{$pattern}{$delimiter}{$modifiers}", $str, $matches[0]);
             return $matches[0];
         }, $source);
 
         return implode("", $results);
     }
 
-    function pcreReplace($pattern, $modifiers, $text, $input) {
-        return preg_replace("/{$pattern}/{$modifiers}", $input, $text);
+    function pcreReplace($pattern, $delimiter, $modifiers, $text, $input) {
+        return preg_replace("{$delimiter}{$pattern}{$delimiter}{$modifiers}", $input, $text);
     }
 
-    function pcreMatch($pattern, $modifiers, $global, $text) {
+    function pcreMatch($pattern, $delimiter, $modifiers, $global, $text) {
         $matches = [];
         $jsonMatches = [];
 
         if ($global === true) {
-            $match = preg_match_all("/{$pattern}/{$modifiers}", $text, $matches, PREG_OFFSET_CAPTURE|PREG_SET_ORDER);
+            $match = preg_match_all("{$delimiter}{$pattern}{$delimiter}{$modifiers}", $text, $matches, PREG_OFFSET_CAPTURE|PREG_SET_ORDER);
         } else {
-            $match = preg_match("/{$pattern}/{$modifiers}", $text, $matches, PREG_OFFSET_CAPTURE);
+            $match = preg_match("{$delimiter}{$pattern}{$delimiter}{$modifiers}", $text, $matches, PREG_OFFSET_CAPTURE);
         }
 
         if ($global === true && $match !== false) {

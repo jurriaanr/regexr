@@ -86,8 +86,16 @@ class API {
 
     function connect() {
         $this->db = new \core\DB();
-        $this->db->connect(DB_HOST, DB_USER_NAME, DB_PASSWORD, DB_NAME, DB_PORT, DB_SOCK);
+        $this->db->connect(
+            DB_HOST,
+            DB_USER_NAME,
+            DB_PASSWORD,
+            DB_NAME,
+            defined('DB_PORT') ? constant('DB_PORT') : null,
+            defined('DB_SOCK') ? constant('DB_SOCK') : null
+        );
     }
+
 
     function result($data, $time=null) {
         $success = $data instanceof \core\Result;
